@@ -1,0 +1,96 @@
+==========================================================================
+ C-PINN-ATT reproduction  |  N = 151  |  split 114/37  |  epochs = 2000  |  seed = 42
+==========================================================================
+
+=== Table 1 : descriptive statistics ===
+Variable   Role   Min    Max   Mean  Sigma  CV_pct  Skew
+     Fr1  Input 2.800  9.890  6.027  1.778  29.496 0.224
+   h1_cm  Input 1.500  4.500  2.523  0.674  26.736 0.994
+   gamma  Input 0.893  2.217  1.310  0.308  23.526 0.999
+       Y Output 3.357 12.688  7.432  2.473  33.275 0.311
+       S Output 1.071  6.250  3.026  1.293  42.739 0.603
+       X Output 8.393 56.522 27.247 11.878  43.593 0.649
+
+=== Table 4 : stratified 5-fold CV ===
+  DNN         R2(Y)=0.985±0.005  R2(S)=0.978±0.006  R2(X)=0.976±0.012  PVI=1.3±1.6
+  gamma_free  R2(Y)=0.951±0.014  R2(S)=0.854±0.050  R2(X)=0.699±0.097  PVI=2.6±3.9
+  CPINN       R2(Y)=0.982±0.004  R2(S)=0.965±0.005  R2(X)=0.974±0.007  PVI=1.3±1.6
+
+=== Section 3.2 : gamma-conditioning ablation (paired t-test) ===
+  R2(Y): full=0.982 free=0.951  t=6.23 p=0.0034 **
+  R2(S): full=0.965 free=0.854  t=4.72 p=0.0092 **
+  R2(X): full=0.974 free=0.699  t=6.09 p=0.0037 **
+
+=== Section 3.3 : C-PINN-Att vs DNN baseline (paired t-test) ===
+  R2(Y): t=-1.43 p=0.2260 NS
+  R2(S): t=-5.39 p=0.0057 **
+  R2(X): t=-0.16 p=0.8800 NS
+
+=== Table 5 : per-gamma-class CV ===
+  γ≈1.00: n=8.4  R2(Y)=0.979  R2(S)=0.957  R2(X)=0.989
+  γ≈1.15: n=6.4  R2(Y)=0.983  R2(S)=0.958  R2(X)=0.957
+  γ≈1.30: n=5.4  R2(Y)=0.924  R2(S)=0.944  R2(X)=0.963
+  γ≈1.45: n=3.4  R2(Y)=0.944  R2(S)=0.884  R2(X)=0.695
+  γ≈1.60: n=3.4  R2(Y)=0.965  R2(S)=0.880  R2(X)=0.745
+  γ≈1.93: n=3.2  R2(Y)=0.870  R2(S)=0.473  R2(X)=0.451
+
+=== Table 6 : progressive ablation (fixed 114/37 split) ===
+  DNN baseline             R2=0.976  RMSE=0.77  PVI=5.4%
+  PINN-A (+C1,C2)          R2=0.977  RMSE=0.71  PVI=8.1%
+  PINN-B (+C8)             R2=0.978  RMSE=0.60  PVI=0.0%
+  PINN-C (+C9)             R2=0.972  RMSE=0.81  PVI=0.0%
+  PINN-Att (+Attention)    R2=0.969  RMSE=0.87  PVI=0.0%
+  C-PINN-Att (+Cascade)    R2=0.967  RMSE=0.81  PVI=0.0%
+
+=== Section 3.8 : validation strategy (fixed split) ===
+  Y: R2=0.990 95%CI=[0.981,0.994] RMSE=0.224 NRMSE=2.58% MAE=0.187
+  S: R2=0.942 95%CI=[0.892,0.967] RMSE=0.290 NRMSE=5.84% MAE=0.242
+  X: R2=0.970 95%CI=[0.944,0.983] RMSE=1.909 NRMSE=4.01% MAE=1.602
+  PVI (fixed split) = 0.0%
+  Shapiro-Wilk: Y: W=0.95 (p=8.3e-02),  S: W=0.95 (p=7.1e-02),  X: W=0.98 (p=8.2e-01)
+  MC-dropout coverage Y: ±1σ=32.4%  ±2σ=81.1%   (nominal 68.3 / 95.4)
+  MC-dropout coverage S: ±1σ=16.2%  ±2σ=32.4%   (nominal 68.3 / 95.4)
+  MC-dropout coverage X: ±1σ=16.2%  ±2σ=40.5%   (nominal 68.3 / 95.4)
+  --- functional consistency (full dataset) ---
+  C-1 Belanger : mean dev = -8.3%, Spearman rho = -0.63 (p=5.6e-18)
+  C-2 Hager-Bremen-Kawagoshi : satisfied by construction (gamma = Lr*/x)
+  C-3 Hager-Li : dataset outside original calibration range (b=0.295 m)
+  C-4 Forster-Skrinde : R2 vs observed = -0.385, vs predicted = 0.036
+
+==========================================================================
+ UQ (deep ensemble + MC-Dropout) and applicability-domain diagnostics
+==========================================================================
+  [UQ] ensemble member 1/5 (seed=42) done
+  [UQ] ensemble member 2/5 (seed=0) done
+  [UQ] ensemble member 3/5 (seed=1) done
+  [UQ] ensemble member 4/5 (seed=7) done
+  [UQ] ensemble member 5/5 (seed=123) done
+
+=== Ensemble + MC-Dropout calibration (combined std) ===
+  Y: mean_sigma=0.1783  cov(+-1s)=54.1%  cov(+-2s)=86.5%  (nominal 68.3/95.4)
+  S: mean_sigma=0.0895  cov(+-1s)=27.0%  cov(+-2s)=43.2%  (nominal 68.3/95.4)
+  X: mean_sigma=0.6324  cov(+-1s)=21.6%  cov(+-2s)=48.6%  (nominal 68.3/95.4)
+
+=== PCA(2) applicability domain ===  explained variance = 85.5% (50.9% + 34.6%)
+  36/37 test points fall inside the training convex hull (1 extrapolated)
+
+=== Relative error (%) — inside vs outside the convex hull ===
+  Y:  inside  (n= 36)  mean=2.69%  std=2.27%  max=10.73%
+       outside (n=  1)  mean=4.20%  std=0.00%  max=4.20%
+  S:  inside  (n= 36)  mean=7.27%  std=5.07%  max=19.92%
+       outside (n=  1)  mean=1.32%  std=0.00%  max=1.32%
+  X:  inside  (n= 36)  mean=5.39%  std=3.39%  max=12.30%
+       outside (n=  1)  mean=7.35%  std=0.00%  max=7.35%
+
+
+==============================================================================
+ MULTI-MODEL BENCHMARK — fixed 114/37 split, seeds [42, 0, 1, 7, 123]
+==============================================================================
+  
+
+Model                     R2(Y)         R2(S)         R2(X)    RMSE     MAE   PVI%    t(s)
+ANFIS             0.982±0.000 0.979±0.000 0.797±0.000   1.811   1.562    8.1    34.7
+XGBoost           0.980±0.001 0.954±0.005 0.978±0.001   0.732   0.601   10.8     0.6
+Random Forest     0.981±0.000 0.958±0.001 0.984±0.001   0.645   0.502    0.0     3.8
+MLP (no physics)  0.988±0.001 0.954±0.015 0.982±0.002   0.655   0.243    1.6    14.8
+
